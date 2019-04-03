@@ -40,7 +40,7 @@ namespace KillInfo
 					KillReadAndWrite.ReadPlayerBySteamID(ev.Killer.SteamId, CheckSteamIDForKillInfo[ev.Player.SteamId]);
 				}
 				CheckSteamIDForKillInfo[ev.Killer.SteamId].AddKill(ev.DamageTypeVar);
-				ev.Killer.PersonalBroadcast(2, $"{CheckSteamIDForKillInfo[ev.Killer.SteamId].GetKillByDamageType(ev.DamageTypeVar)} (+{ CheckSteamIDForKillInfo[ev.Killer.SteamId].GetCurrentKillsByDamageType(ev.DamageTypeVar)}):Kills with {ev.DamageTypeVar.ToString()}", true);
+				ev.Killer.PersonalBroadcast(2, $"{CheckSteamIDForKillInfo[ev.Killer.SteamId].GetKillByDamageType(ev.DamageTypeVar)} (+{ CheckSteamIDForKillInfo[ev.Killer.SteamId].GetCurrentKillsByDamageType(ev.DamageTypeVar)}):Убийств с помощью {ev.DamageTypeVar.ToString()}", true);
 			}
 		}
 
@@ -61,29 +61,29 @@ namespace KillInfo
 					KillReadAndWrite.ReadPlayerBySteamID(playa.SteamId, CheckSteamIDForKillInfo[playa.SteamId]);
 				}
 		
-				playa.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(2)}%. ({CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(1)}\\{CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(0)})");
+				playa.SendConsoleMessage($"Твоя точность: {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(2)}%. ({CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(1)}\\{CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(0)})");
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
 				{
 					if (CheckSteamIDForKillInfo[playa.SteamId].GetKillByDamageType(dmgtype) != 0)
 					{
-						playa.SendConsoleMessage("You've gotten " + CheckSteamIDForKillInfo[playa.SteamId].GetKillByDamageType(dmgtype) + "(+" + CheckSteamIDForKillInfo[playa.SteamId].GetCurrentKillsByDamageType(dmgtype) + " this round) kill(s) with " + dmgtype.ToString().Replace("_", "-") + ".");
+						playa.SendConsoleMessage("Ты убил " + CheckSteamIDForKillInfo[playa.SteamId].GetKillByDamageType(dmgtype) + "(+" + CheckSteamIDForKillInfo[playa.SteamId].GetCurrentKillsByDamageType(dmgtype) + " в этом раунде) человек с помощью " + dmgtype.ToString().Replace("_", "-") + ".");
 					}
 				}
 				
 				if (CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths() == 0)
 				{
-					playa.SendConsoleMessage("Your KDR is " + CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills() + ". ");
+					playa.SendConsoleMessage("Твой КДА: " + CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills() + ". ");
 				}
 				else
 				{
-					playa.SendConsoleMessage($"Your KDR is {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}. ({(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills()} / {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}) ");
+					playa.SendConsoleMessage($"Твой КДА: {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}. ({(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills()} / {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}) ");
 				}
 
 				CheckSteamIDForKillInfo[playa.SteamId].KillsThisRoundCounter.Clear();
 			}
 			KillReadAndWrite.SaveAllPlayers(CheckSteamIDForKillInfo);
-			Smod2.PluginManager.Manager.Server.Map.Broadcast(5, "Check your console for more detailed information about kills, death and accuracy! Press ~ to access!", true);
+			Smod2.PluginManager.Manager.Server.Map.Broadcast(5, "Проверь консоль, чтобы узнать свои убийства, точность и КДА. Консоль открывается на клавишу 'Ё'!", true);
 			configOptions.CheckForFalseRoundEnd = false;
 		}
 
