@@ -109,23 +109,23 @@ namespace KillInfo
 					CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
 				}
 
-				ev.Player.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[ev.Player.SteamId].GetShotInfo(2)}%.");
+				ev.Player.SendConsoleMessage($"Твоя точность: {CheckSteamIDForKillInfo[ev.Player.SteamId].GetShotInfo(2)}%.");
 
 				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
 				{
 					if (CheckSteamIDForKillInfo[ev.Player.SteamId].GetKillByDamageType(dmgtype) != 0)
 					{
-						ev.Player.SendConsoleMessage("You've gotten " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetKillByDamageType(dmgtype) +" kill(s) with " + dmgtype.ToString().Replace("_", "-") + ".");
+						ev.Player.SendConsoleMessage("Ты убил " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetKillByDamageType(dmgtype) + " человек с помощью " + dmgtype.ToString().Replace("_", "-") + ".");
 					}
 				}
 
 				if (CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfDeaths() == 0)
 				{
-					ev.Player.SendConsoleMessage("Your KDR is " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() + ". ");
+					ev.Player.SendConsoleMessage("Твой КДА " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() + ". ");
 				}
 				else
 				{
-					ev.Player.SendConsoleMessage($"Your KDR is {(float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfDeaths()}.");
+					ev.Player.SendConsoleMessage($"Твой КДА {(float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfDeaths()}.");
 				}
 			}
 		}
