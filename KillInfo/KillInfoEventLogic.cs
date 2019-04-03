@@ -8,7 +8,7 @@ using KillInfo.Managers;
 
 namespace KillInfo
 {
-	class KillInfoEventLogic : IEventHandlerPlayerDie,IEventHandlerRoundEnd,IEventHandlerShoot, IEventHandlerRoundStart
+	class KillInfoEventLogic : IEventHandlerPlayerDie,IEventHandlerRoundEnd,IEventHandlerShoot, IEventHandlerWaitingForPlayers, IEventHandlerCallCommand
 	{
 		public Dictionary<string, PlayerInfo> CheckSteamIDForKillInfo = new Dictionary<string, PlayerInfo>();
 
@@ -26,8 +26,7 @@ namespace KillInfo
 		{
 			if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
 			{
-				CheckSteamIDForKillInfo[ev.Player.SteamId] = new PlayerInfo();
-				KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId, CheckSteamIDForKillInfo[ev.Player.SteamId]);
+				CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
 			}
 
 			CheckSteamIDForKillInfo[ev.Player.SteamId].AddDeath(ev.DamageTypeVar);
@@ -36,8 +35,7 @@ namespace KillInfo
 			{
 				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Killer.SteamId))
 				{
-					CheckSteamIDForKillInfo[ev.Killer.SteamId] = new PlayerInfo();
-					KillReadAndWrite.ReadPlayerBySteamID(ev.Killer.SteamId, CheckSteamIDForKillInfo[ev.Player.SteamId]);
+					CheckSteamIDForKillInfo[ev.Killer.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Killer.SteamId);
 				}
 				CheckSteamIDForKillInfo[ev.Killer.SteamId].AddKill(ev.DamageTypeVar);
 				ev.Killer.PersonalBroadcast(2, $"{CheckSteamIDForKillInfo[ev.Killer.SteamId].GetKillByDamageType(ev.DamageTypeVar)} (+{ CheckSteamIDForKillInfo[ev.Killer.SteamId].GetCurrentKillsByDamageType(ev.DamageTypeVar)}):Убийств с помощью {ev.DamageTypeVar.ToString()}", true);
@@ -56,9 +54,7 @@ namespace KillInfo
 
 				if (!CheckSteamIDForKillInfo.ContainsKey(playa.SteamId))
 				{
-					CheckSteamIDForKillInfo[playa.SteamId] = new PlayerInfo();
-
-					KillReadAndWrite.ReadPlayerBySteamID(playa.SteamId, CheckSteamIDForKillInfo[playa.SteamId]);
+					CheckSteamIDForKillInfo[playa.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(playa.SteamId);
 				}
 		
 				playa.SendConsoleMessage($"Твоя точность: {CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(2)}%. ({CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(1)}\\{CheckSteamIDForKillInfo[playa.SteamId].GetShotInfo(0)})");
@@ -79,7 +75,6 @@ namespace KillInfo
 				{
 					playa.SendConsoleMessage($"Твой КДА: {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}. ({(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfKills()} / {(float)CheckSteamIDForKillInfo[playa.SteamId].GetAmountOfDeaths()}) ");
 				}
-
 				CheckSteamIDForKillInfo[playa.SteamId].KillsThisRoundCounter.Clear();
 			}
 			KillReadAndWrite.SaveAllPlayers(CheckSteamIDForKillInfo);
@@ -87,27 +82,11 @@ namespace KillInfo
 			configOptions.CheckForFalseRoundEnd = false;
 		}
 
-		public void OnRoundStart(RoundStartEvent ev)
-		{
-			if(plugin.GetConfigBool("ki_disable"))
-			{
-				plugin.pluginManager.DisablePlugin(plugin);
-			}
-			configOptions.SetUp(plugin);
-			KillReadAndWrite.SetUp(configOptions);
-			KillReadAndWrite.ReadAllPlayers(CheckSteamIDForKillInfo);
-			if (KillReadAndWrite.MakeSureDirExistAndGetDir().Length == 0)
-			{
-				plugin.Info("ki_playerinfodir is not set correctly. Nothing is going to be saved.");
-			}
-		}
-
 		public void OnShoot(PlayerShootEvent ev)
 		{
 			if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
 			{
-				CheckSteamIDForKillInfo[ev.Player.SteamId] = new PlayerInfo();
-				KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId, CheckSteamIDForKillInfo[ev.Player.SteamId]);
+				CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
 			}
 
 			if (ev.Target != null)
@@ -117,6 +96,53 @@ namespace KillInfo
 			else
 			{
 				CheckSteamIDForKillInfo[ev.Player.SteamId].AddShot(false);
+			}
+		}
+
+		public void OnCallCommand(PlayerCallCommandEvent ev)
+		{
+			plugin.Info(ev.Command);
+			if(ev.Command.ToLower() == "killinfo")
+			{
+				if (!CheckSteamIDForKillInfo.ContainsKey(ev.Player.SteamId))
+				{
+					CheckSteamIDForKillInfo[ev.Player.SteamId] = KillReadAndWrite.ReadPlayerBySteamID(ev.Player.SteamId);
+				}
+
+				ev.Player.SendConsoleMessage($"Your accuracy is {CheckSteamIDForKillInfo[ev.Player.SteamId].GetShotInfo(2)}%.");
+
+				foreach (DamageType dmgtype in (DamageType[])Enum.GetValues(typeof(DamageType)))
+				{
+					if (CheckSteamIDForKillInfo[ev.Player.SteamId].GetKillByDamageType(dmgtype) != 0)
+					{
+						ev.Player.SendConsoleMessage("You've gotten " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetKillByDamageType(dmgtype) +" kill(s) with " + dmgtype.ToString().Replace("_", "-") + ".");
+					}
+				}
+
+				if (CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfDeaths() == 0)
+				{
+					ev.Player.SendConsoleMessage("Your KDR is " + CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() + ". ");
+				}
+				else
+				{
+					ev.Player.SendConsoleMessage($"Your KDR is {(float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfKills() / (float)CheckSteamIDForKillInfo[ev.Player.SteamId].GetAmountOfDeaths()}.");
+				}
+			}
+		}
+
+		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
+		{
+			if (plugin.GetConfigBool("ki_disable"))
+			{
+				plugin.pluginManager.DisablePlugin(plugin);
+			}
+			configOptions.SetUp(plugin);
+			KillReadAndWrite.SetUp(configOptions);
+			CheckSteamIDForKillInfo = KillReadAndWrite.ReadAllPlayers(CheckSteamIDForKillInfo);
+
+			if (KillReadAndWrite.MakeSureDirExistAndGetDir().Length == 0)
+			{
+				plugin.Error("ki_playerinfodir is not set correctly. Nothing is going to be saved.");
 			}
 		}
 	}
