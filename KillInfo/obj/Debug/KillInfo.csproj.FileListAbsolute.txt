@@ -1,0 +1,6 @@
+D:\scpdish\KillInfo\KillInfo\obj\Debug\KillInfo.csprojAssemblyReference.cache
+D:\scpdish\KillInfo\KillInfo\obj\Debug\KillInfo.csproj.CoreCompileInputs.cache
+C:\Users\Chelovek\Desktop\Joker\KillInfo.dll
+C:\Users\Chelovek\Desktop\Joker\KillInfo.pdb
+D:\scpdish\KillInfo\KillInfo\obj\Debug\KillInfo.dll
+D:\scpdish\KillInfo\KillInfo\obj\Debug\KillInfo.pdb

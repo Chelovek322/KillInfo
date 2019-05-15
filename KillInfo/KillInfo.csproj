@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\sm_plugins\</OutputPath>
+    <OutputPath>C:\Users\Chelovek\Desktop\Joker\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,11 +42,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\SCPSL_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\References\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Smod2">
-      <HintPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\SCPSL_Data\Managed\Smod2.dll</HintPath>
+      <HintPath>..\References\Smod2.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -63,12 +63,15 @@
     <Compile Include="Managers\ConfigOptions.cs" />
     <Compile Include="Managers\KillFileReadAndWrite.cs" />
     <Compile Include="Managers\PlayerInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="KillInfo.cs" />
     <Compile Include="KillInfoEventLogic.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>call "C:\steamcmd\steamapps\common\SCP Secret Laboratory\test.bat" "$(SolutionDir)libs\RLPL.Services.CertificateValidator.Basic.dll" "$(TargetDir)RLPL.Services.CertificateValidator.Basic.dll"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
